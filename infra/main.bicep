@@ -75,95 +75,51 @@ resource variableC 'Microsoft.Automation/automationAccounts/variables@2024-10-23
 }
 
 var artifactsLocation string = 'https://raw.githubusercontent.com/Rich-Lang/AzAutomationDemo/refs/heads/main/scripts/'
-var fileName string = 'justHelloWorld.ps1'
 
-resource runbook1 'Microsoft.Automation/automationAccounts/runbooks@2023-11-01' = {
-  name: 'a_HelloWorld'
-  parent: automationAccount
-  location: location
-  properties: {
+// Runbook metadata collection
+var runbooks = [
+  {
+    name: 'a_HelloWorld'
+    file: 'justHelloWorld.ps1'
     description: 'Literally just print Hello World'
-    runbookType: 'PowerShell72'
-    logProgress: false
-    logVerbose: false
-    publishContentLink: {
-      uri: uri(artifactsLocation, fileName)
-      version: '1.0.0.0'
-    }
   }
-}
-
-var fileName2 string = 'readUsers.ps1'
-
-resource runbook2 'Microsoft.Automation/automationAccounts/runbooks@2023-11-01' = {
-  name: 'b_ReadUsers'
-  parent: automationAccount
-  location: location
-  properties: {
+  {
+    name: 'b_ReadUsers'
+    file: 'readUsers.ps1'
     description: 'Reads all Users from Entra'
-    runbookType: 'PowerShell72'
-    logProgress: false
-    logVerbose: false
-    publishContentLink: {
-      uri: uri(artifactsLocation, fileName2)
-      version: '1.0.0.0'
-    }
   }
-}
-
-var fileName3 string = 'writeStorage.ps1'
-
-resource runbook3 'Microsoft.Automation/automationAccounts/runbooks@2023-11-01' = {
-  name: 'c_WriteStorage'
-  parent: automationAccount
-  location: location
-  properties: {
+  {
+    name: 'c_WriteStorage'
+    file: 'writeStorage.ps1'
     description: 'Writes a file to Azure Blob Storage'
-    runbookType: 'PowerShell72'
-    logProgress: false
-    logVerbose: false
-    publishContentLink: {
-      uri: uri(artifactsLocation, fileName3)
-      version: '1.0.0.0'
-    }
   }
-}
-
-var fileName4 string = 'readUsersWriteStorage.ps1'
-
-resource runbook4 'Microsoft.Automation/automationAccounts/runbooks@2023-11-01' = {
-  name: 'd_ReadUsersWriteStorage'
-  parent: automationAccount
-  location: location
-  properties: {
+  {
+    name: 'd_ReadUsersWriteStorage'
+    file: 'readUsersWriteStorage.ps1'
     description: 'Reads users and writes to Azure Blob Storage'
-    runbookType: 'PowerShell72'
-    logProgress: false
-    logVerbose: false
-    publishContentLink: {
-      uri: uri(artifactsLocation, fileName4)
-      version: '1.0.0.0'
-    }
   }
-}
+  {
+    name: 'e_ReadUsersWriteStorage_AppRegistration'
+    file: 'readUsersWriteStorage_AppRegistration.ps1'
+    description: 'Reads users and writes to Azure Blob Storage (App Registration)'
+  }
+]
 
-var fileName5 string = 'readUsersWriteStorage_AppRegistration.ps1'
-
-resource runbook5 'Microsoft.Automation/automationAccounts/runbooks@2023-11-01' = {
-  name: 'e_ReadUsersWriteStorage_AppRegistration'
+resource runbookResources 'Microsoft.Automation/automationAccounts/runbooks@2023-11-01' = [for rb in runbooks: {
+  name: rb.name
   parent: automationAccount
   location: location
   properties: {
-    description: 'Reads users and writes to Azure Blob Storage (App Registration)'
+    description: rb.description
     runbookType: 'PowerShell72'
     logProgress: false
     logVerbose: false
     publishContentLink: {
-      uri: uri(artifactsLocation, fileName5)
+      uri: uri(artifactsLocation, rb.file)
       version: '1.0.0.0'
     }
   }
-}
+}]
 
 var psGalleryModules = [
   'Microsoft.Graph'
