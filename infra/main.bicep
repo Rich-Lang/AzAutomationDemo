@@ -47,32 +47,48 @@ resource automationAccount 'Microsoft.Automation/automationAccounts@2023-11-01' 
   tags: tags
 }
 
-resource variableA 'Microsoft.Automation/automationAccounts/variables@2024-10-23' = {
-  parent: automationAccount
-  name: 'resourceGroup'
-  properties: {
-    isEncrypted: false    
-    value: '"${resourceGroup().name}"'
+// Automation variables (loop). clientSecret is a placeholder and marked encrypted.
+var automationVariables = [
+  {
+    name: 'resourceGroup'
+    value: resourceGroup().name
+    encrypted: false
   }
-}
+  {
+    name: 'storageAccountName'
+    value: storageAccountName
+    encrypted: false
+  }
+  {
+    name: 'containerName'
+    value: containerName
+    encrypted: false
+  }
+  {
+    name: 'clientId'
+    value: 'PLACEHOLDER-CLIENT-ID'
+    encrypted: false
+  }
+  {
+    name: 'clientSecret'
+    value: 'PLACEHOLDER-SECRET' // Replace manually or via secure process post-deploy
+    encrypted: true
+  }
+  {
+    name: 'tenantId'
+    value: tenant().tenantId
+    encrypted: false
+  }
+]
 
-resource variableB 'Microsoft.Automation/automationAccounts/variables@2024-10-23' = {
+resource automationAccountVariables 'Microsoft.Automation/automationAccounts/variables@2024-10-23' = [for v in automationVariables: {
   parent: automationAccount
-  name: 'storageAccountName'
+  name: v.name
   properties: {
-    isEncrypted: false
-    value: '"${storageAccountName}"'
+    isEncrypted: v.encrypted
+    value: '"${v.value}"'
   }
-}
-
-resource variableC 'Microsoft.Automation/automationAccounts/variables@2024-10-23' = {
-  parent: automationAccount
-  name: 'containerName'
-  properties: {
-    isEncrypted: false
-    value: '"${containerName}"'
-  }
-}
+}]
 
 var artifactsLocation string = 'https://raw.githubusercontent.com/Rich-Lang/AzAutomationDemo/refs/heads/main/scripts/'
 
