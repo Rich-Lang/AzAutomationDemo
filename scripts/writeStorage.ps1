@@ -14,9 +14,8 @@ Write-Output "ContainerName: $ContainerName"
 Write-Output "Connecting to Azure..."
 Connect-AzAccount -Identity
 
-$sa = Get-AzStorageAccount -ResourceGroupName $ResourceGroup -Name $StorageAccountName
-if (-not $sa) { throw "Storage account not found: $StorageAccountName" }
-$ctx = $sa.Context
+# Create storage context (using OAuth)
+$ctx = New-AzStorageContext -StorageAccountName $StorageAccountName -UseConnectedAccount
 
 $stamp = Get-Date -Format "yyyyMMdd-HHmmss"
 
