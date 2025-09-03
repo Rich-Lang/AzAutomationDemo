@@ -147,6 +147,24 @@ resource runbook4 'Microsoft.Automation/automationAccounts/runbooks@2023-11-01' 
   }
 }
 
+var fileName5 string = 'readUsersWriteStorage_AppRegistration.ps1'
+
+resource runbook5 'Microsoft.Automation/automationAccounts/runbooks@2023-11-01' = {
+  name: 'e_ReadUsersWriteStorage_AppRegistration'
+  parent: automationAccount
+  location: location
+  properties: {
+    description: 'Reads users and writes to Azure Blob Storage (App Registration)'
+    runbookType: 'PowerShell72'
+    logProgress: false
+    logVerbose: false
+    publishContentLink: {
+      uri: uri(artifactsLocation, fileName5)
+      version: '1.0.0.0'
+    }
+  }
+}
+
 var psGalleryModules = [
   'Microsoft.Graph'
   'Microsoft.Graph.Users'
