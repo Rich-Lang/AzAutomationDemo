@@ -8,6 +8,7 @@ Minimal template: `main.bicep` creates:
 - storageAccountName (required)
 - automationAccountName (required)
 - location (defaults to resource group location)
+- grantDeployerBlobDataContributor (bool, default false) – give the deploying user data access to blobs
 - tags (object, optional)
 
 ## Deploy
@@ -23,7 +24,7 @@ az group create -n $rg -l $loc
 az deployment group create `
   -g $rg `
   -f ./infra/main.bicep `
-  -p storageAccountName=$stg automationAccountName=$auto
+  -p storageAccountName=$stg automationAccountName=$auto grantDeployerBlobDataContributor=true
 ```
 
 ## Outputs

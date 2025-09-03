@@ -13,6 +13,9 @@ param containerName string = 'exports'
 @description('Optional tags applied to all resources.')
 param tags object = {}
 
+@description('Grant the deploying user Storage Blob Data Contributor on the storage account (for ad-hoc testing).')
+param grantDeployerBlobDataContributor bool = false
+
 // Storage Account
 resource stg 'Microsoft.Storage/storageAccounts@2023-01-01' = {
   name: storageAccountName
@@ -184,6 +187,16 @@ resource storageBlobDataContributorRA 'Microsoft.Authorization/roleAssignments@2
     roleDefinitionId: subscriptionResourceId('Microsoft.Authorization/roleDefinitions', 'b7e6dc6d-f1e8-4753-8033-0f276bb0955b')
     principalId: automationAccount.identity.principalId
     principalType: 'ServicePrincipal'
+  }
+}
+
+resource storageBlobDataContributorDeployer 'Microsoft.Authorization/roleAssignments@2022-04-01' = if (grantDeployerBlobDataContributor) {  
+  name: guid(stg.id, 'b7e6dc6d-f1e8-4753-8033-0f276bb0955b', deployer().objectId)
+  scope: stg
+  properties: {
+    roleDefinitionId: subscriptionResourceId('Microsoft.Authorization/roleDefinitions', 'b7e6dc6d-f1e8-4753-8033-0f276bb0955b')
+    principalId: deployer().objectId
+    principalType:  'User'
   }
 }
 
