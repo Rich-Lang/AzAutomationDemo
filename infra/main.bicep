@@ -65,17 +65,17 @@ var automationVariables = [
     encrypted: false
   }
   {
-    name: 'clientId'
-    value: 'PLACEHOLDER-CLIENT-ID'
+    name: 'clientId' // Only used by readUsersWriteStorage_AppRegistration.ps1
+    value: 'PLACEHOLDER-CLIENT-ID' // Replace manually or via secure process post-deploy
     encrypted: false
   }
   {
-    name: 'clientSecret'
+    name: 'clientSecret' // Only used by readUsersWriteStorage_AppRegistration.ps1
     value: 'PLACEHOLDER-SECRET' // Replace manually or via secure process post-deploy
     encrypted: true
   }
   {
-    name: 'tenantId'
+    name: 'tenantId' // Only used by readUsersWriteStorage_AppRegistration.ps1
     value: tenant().tenantId
     encrypted: false
   }
