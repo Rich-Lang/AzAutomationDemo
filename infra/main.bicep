@@ -187,22 +187,6 @@ resource storageBlobDataContributorRA 'Microsoft.Authorization/roleAssignments@2
   }
 }
 
-// Role assignment: Grant Storage Blob Data Contributor to Automation Account managed identity over the Storage Account
-// Role definition IDs:
-//   Storage Blob Data Contributor: b7e6dc6d-f1e8-4753-8033-0f276bb0955b
-//   Storage Account Contributor (management only, no data): 17d1049b-9a84-46fb-8f53-869881c3d3ab
-// Using Blob Data Contributor for read/write data access.
-resource storageAccountContributorRA 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
-  // name must be GUID - deterministic using storage + automation account names
-  name: guid(stg.id, '17d1049b-9a84-46fb-8f53-869881c3d3ab', automationAccount.name)
-  scope: stg
-  properties: {
-    roleDefinitionId: subscriptionResourceId('Microsoft.Authorization/roleDefinitions', '17d1049b-9a84-46fb-8f53-869881c3d3ab')
-    principalId: automationAccount.identity.principalId
-    principalType: 'ServicePrincipal'
-  }
-}
-
 output storageAccountId string = stg.id
 output automationAccountId string = automationAccount.id
 output automationIdentityPrincipalId string = automationAccount.identity.principalId
